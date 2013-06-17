@@ -39,17 +39,6 @@ namespace umbraco.cms.presentation.members
 
             if (Member.InUmbracoMemberMode())
             {
-                _document = new Member(int.Parse(Request.QueryString["id"]));
-                _member = Membership.GetUser(_document.Id);
-                _contentControl = new controls.ContentControl(_document, controls.ContentControl.publishModes.NoPublish, "TabView1");
-                _contentControl.Width = Unit.Pixel(666);
-                _contentControl.Height = Unit.Pixel(666);
-
-                //this must be set to false as we don't want to proceed to save anything if the page is invalid
-                _contentControl.SavePropertyDataWhenInvalid = false;
-
-                plc.Controls.Add(_contentControl);
-
                 if (!IsPostBack)
                 {
                     MemberLoginNameTxt.Text = _document.LoginName;
@@ -226,15 +215,28 @@ namespace umbraco.cms.presentation.members
 
 	    override protected void OnInit(EventArgs e)
 		{
-		    if (!Member.InUmbracoMemberMode())
-		    {
-		        m_MemberShipPanel.hasMenu = true;
-		        umbraco.uicontrols.MenuImageButton menuSave = m_MemberShipPanel.Menu.NewImageButton();
-		        menuSave.ID = m_MemberShipPanel.ID + "_save";
-		        menuSave.ImageUrl = SystemDirectories.Umbraco + "/images/editor/save.gif";
-		        menuSave.Click += new ImageClickEventHandler(MenuSaveClick);
-		        menuSave.AltText = ui.Text("buttons", "save", null);
-		    }
+			if (!Member.InUmbracoMemberMode())
+			{
+				m_MemberShipPanel.hasMenu = true;
+				umbraco.uicontrols.MenuImageButton menuSave = m_MemberShipPanel.Menu.NewImageButton();
+				menuSave.ID = m_MemberShipPanel.ID + "_save";
+				menuSave.ImageUrl = SystemDirectories.Umbraco + "/images/editor/save.gif";
+				menuSave.Click += new ImageClickEventHandler(MenuSaveClick);
+				menuSave.AltText = ui.Text("buttons", "save", null);
+			}
+			else
+			{
+				_document = new Member(int.Parse(Request.QueryString["id"]));
+				_member = Membership.GetUser(_document.Id);
+				_contentControl = new controls.ContentControl(_document, controls.ContentControl.publishModes.NoPublish, "TabView1");
+				_contentControl.Width = Unit.Pixel(666);
+				_contentControl.Height = Unit.Pixel(666);
+
+				//this must be set to false as we don't want to proceed to save anything if the page is invalid
+				_contentControl.SavePropertyDataWhenInvalid = false;
+
+				plc.Controls.Add(_contentControl);
+			}
 		    base.OnInit(e);
         }
 		
